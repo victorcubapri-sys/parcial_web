@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Sistema de gestión para una biblioteca digital universitaria." />
+    <title>Biblioteca Digital</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegación principal">
+        <div class="brand-block">
+          <div class="brand-mark">B</div>
+          <div>
+            <p class="eyebrow">Universidad</p>
+            <h1>Biblioteca</h1>
+          </div>
+        </div>
+
+        <nav class="main-nav" aria-label="Menú principal">
+          <button class="nav-btn active" type="button" data-view="catalog">
+            <span class="nav-icon">☰</span>
+            <span>Catálogo</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="loans">
+            <span class="nav-icon">📚</span>
+            <span id="loans-menu-label">Mis préstamos</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="form">
+            <span class="nav-icon">＋</span>
+            <span>Agregar libro</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="summary">
+            <span class="nav-icon">◫</span>
+            <span>Resumen</span>
+          </button>
+        </nav>
+
+        <div class="user-panel">
+          <p class="user-greeting" id="user-greeting">Hola, Victor</p>
+        </div>
+      </aside>
+
+      <div class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h2 id="page-title">Catálogo</h2>
+          </div>
+          <button id="theme-toggle" type="button" class="secondary-btn">Tema oscuro</button>
+        </header>
+
+        <main class="views-area">
+          <section id="view-catalog" class="view active" aria-label="Catálogo de libros">
+            <div class="toolbar panel">
+              <div class="search-wrap">
+                <label class="sr-only" for="catalog-search">Buscar en el catálogo</label>
+                <input id="catalog-search" type="search" placeholder="Buscar por título o autor" />
+              </div>
+
+              <div class="filters-row">
+                <label>
+                  Estado
+                  <select id="status-filter">
+                    <option value="todos">Todos</option>
+                    <option value="disponibles">Disponibles</option>
+                    <option value="prestados">Prestados</option>
+                  </select>
+                </label>
+
+                <label>
+                  Género
+                  <select id="genre-filter">
+                    <option value="todos">Todos</option>
+                  </select>
+                </label>
+
+                <label>
+                  Ordenar por
+                  <select id="sort-field">
+                    <option value="titulo">Título</option>
+                    <option value="autor">Autor</option>
+                    <option value="anio">Año</option>
+                  </select>
+                </label>
+
+                <label>
+                  Dirección
+                  <select id="sort-direction">
+                    <option value="asc">Ascendente</option>
+                    <option value="desc">Descendente</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div class="results-meta">
+              <p id="catalog-counter">Mostrando 0 de 0 libros</p>
+            </div>
+            <div id="catalog-grid" class="catalog-grid" aria-live="polite"></div>
+          </section>
+
+          <section id="view-loans" class="view" aria-label="Préstamos activos y históricos">
+            <div class="loans-layout">
+              <div class="panel section-panel">
+                <h3>Préstamos activos</h3>
+                <div id="active-loans-list" class="loan-list"></div>
+              </div>
+
+              <div class="panel section-panel">
+                <h3>Historial de préstamos</h3>
+                <div id="history-loans-list" class="loan-list"></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="view-form" class="view" aria-label="Formulario de catálogo">
+            <div class="panel form-panel">
+              <div class="form-header">
+                <h3 id="form-title">Agregar libro</h3>
+              </div>
+
+              <form id="book-form" novalidate>
+                <div class="form-grid">
+                  <div class="field-group">
+                    <label for="book-title">Título</label>
+                    <input id="book-title" name="titulo" type="text" maxlength="60" />
+                    <p class="field-error" data-error-for="titulo"></p>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="book-author">Autor</label>
+                    <input id="book-author" name="autor" type="text" />
+                    <p class="field-error" data-error-for="autor"></p>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="book-year">Año de publicación</label>
+                    <input id="book-year" name="anio" type="number" min="1000" max="2026" />
+                    <p class="field-error" data-error-for="anio"></p>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="book-genre">Género</label>
+                    <select id="book-genre" name="genero"></select>
+                    <p class="field-error" data-error-for="genero"></p>
+                  </div>
+                </div>
+
+                <div class="field-group full-width">
+                  <label for="book-comment">Comentario</label>
+                  <textarea id="book-comment" name="comentario" maxlength="120" rows="4"></textarea>
+                  <div class="char-counter-row">
+                    <span class="field-error" data-error-for="comentario"></span>
+                    <span id="comment-counter">120 caracteres restantes</span>
+                  </div>
+                </div>
+
+                <div class="checkbox-wrap">
+                  <label class="checkbox-label" for="book-collection">
+                    <input id="book-collection" name="coleccion" type="checkbox" />
+                    <span>Es ejemplar de colección</span>
+                  </label>
+                </div>
+
+                <div class="form-actions">
+                  <button id="submit-book" type="submit" class="primary-btn">Guardar libro</button>
+                  <button id="cancel-edit" type="button" class="secondary-btn hidden">Cancelar</button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <section id="view-summary" class="view" aria-label="Resumen y ajustes">
+            <div class="summary-grid panel">
+              <article class="stat-card">
+                <span class="stat-label">Total de libros</span>
+                <strong id="stat-total">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label">Disponibles</span>
+                <strong id="stat-available">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label">Prestados</span>
+                <strong id="stat-borrowed">0</strong>
+              </article>
+              <article class="stat-card">
+                <span class="stat-label">Vencidos</span>
+                <strong id="stat-overdue">0</strong>
+              </article>
+            </div>
+
+            <div class="settings-panel panel">
+              <h3>Ajustes</h3>
+              <div class="settings-grid">
+                <label>
+                  Nombre del usuario
+                  <input id="user-name-input" type="text" maxlength="40" placeholder="Ej. Victor" />
+                </label>
+                <button id="reset-library" class="danger-btn" type="button">Restablecer biblioteca</button>
+              </div>
+            </div>
+
+            <div class="panel genre-panel">
+              <h3>Libros por género</h3>
+              <ul id="genre-summary" class="genre-summary-list"></ul>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div id="modal-root" aria-live="assertive"></div>
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
